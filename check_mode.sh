@@ -18,19 +18,20 @@ if [ "$?" = 0 ]; then
 # Check for current status, if it is in standalone or empty
 # Bring it up, else do nothing
   case $Status in
-        NET | START)
-# Do nothing, we're online
-        echo "NET" > $STATUS_FILE
-        ;;
         STANDALONE)
 # We're currently running standalone, change DMR Network to enable
         sed -i '/^\[DMR Network\]$/,/^\[/ s/^Enable=0/Enable=1/' $MMDVMHOST
         systemctl restart mmdvmhost
         echo "NET" > $STATUS_FILE
-        ;;
+        ;;        
+        *)
+# Do nothing, we're online
+        echo "NET" > $STATUS_FILE
+        ;;        
   esac
 # Internet is down, go into standalone mode regardless
 else
+  echo "DMR Network $IPAddress is DOWN"
   sed -i '/^\[DMR Network\]$/,/^\[/ s/^Enable=1/Enable=0/' $MMDVMHOST
   systemctl restart mmdvmhost
   echo "STANDALONE" > $STATUS_FILE
