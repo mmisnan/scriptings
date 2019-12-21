@@ -1,4 +1,3 @@
-
 #!/bin/bash
 MMDVMHOST=/etc/mmdvmhost
 STATUS_FILE=/var/tmp/mmdvmstatus
@@ -23,15 +22,17 @@ if [ "$?" = 0 ]; then
         sed -i '/^\[DMR Network\]$/,/^\[/ s/^Enable=0/Enable=1/' $MMDVMHOST
         systemctl restart mmdvmhost
         echo "NET" > $STATUS_FILE
-        ;;        
+        ;;
+# Check if mmdvmhost is running, start if not
         *)
-# Do nothing, we're online
+        systemctl status mmdvmhost &> /dev/null
+        if [ "$?" -ne 0 ]; then
+          systemctl restart mmdvmhost
+        fi
         echo "NET" > $STATUS_FILE
-        ;;        
   esac
 # Internet is down, go into standalone mode regardless
 else
-  echo "DMR Network $IPAddress is DOWN"
   sed -i '/^\[DMR Network\]$/,/^\[/ s/^Enable=1/Enable=0/' $MMDVMHOST
   systemctl restart mmdvmhost
   echo "STANDALONE" > $STATUS_FILE
