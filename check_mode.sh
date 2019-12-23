@@ -19,6 +19,7 @@ if [ "$?" = 0 ]; then
   case $Status in
         STANDALONE)
 # We're currently running standalone, change DMR Network to enable
+        sudo mount -o remount,rw
         echo $(date -u) "DMR Network $IPAddress is UP - NET MODE" >> $LOG
         sed -i '/^\[DMR Network\]$/,/^\[/ s/^Enable=0/Enable=1/' $MMDVMHOST
         systemctl restart mmdvmhost
@@ -35,8 +36,11 @@ if [ "$?" = 0 ]; then
   esac
 # Internet is down, go into standalone mode regardless
 else
+  sudo mount -o remount,rw
   echo $(date -u) "DMR Network $IPAddress is DOWN - STANDALONE MODE" >> $LOG
   sed -i '/^\[DMR Network\]$/,/^\[/ s/^Enable=1/Enable=0/' $MMDVMHOST
   systemctl restart mmdvmhost
   echo "STANDALONE" > $STATUS_FILE
 fi
+# Make sure turn into ro filesystem
+sudo mount -o remount,ro / &> /dev/null
