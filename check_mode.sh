@@ -3,6 +3,8 @@ MMDVMHOST=/etc/mmdvmhost
 STATUS_FILE=/var/tmp/mmdvmstatus
 LOG=/var/log/mmdvmlog
 
+# Make it read/write
+mount -o remount,rw &> /dev/null
 # GET DMR IP address from the current configuration
 IPAddress=$(awk -v TARGET="DMR Network" -F ' *= *' '{ if ($0 ~ /^\[.*\]$/) { gsub(/^\[|\]$/, "", $0); SECTION=$0 } else if (($1 ~ /Address/) && (SECTION==TARGET)) { print $2 }}' $MMDVMHOST)
 # Get current status
@@ -19,7 +21,6 @@ if [ "$?" = 0 ]; then
   case $Status in
         STANDALONE)
 # We're currently running standalone, change DMR Network to enable
-        mount -o remount,rw &> /dev/null
         echo $(date -u) "DMR Network $IPAddress is UP - NET MODE" >> $LOG
         sed -i '/^\[DMR Network\]$/,/^\[/ s/^Enable=0/Enable=1/' $MMDVMHOST
         systemctl restart mmdvmhost
@@ -31,13 +32,13 @@ if [ "$?" = 0 ]; then
         systemctl status mmdvmhost &> /dev/null
         if [ "$?" -ne 0 ]; then
           echo $(date -u) "DMR Network $IPAddress is UP - NET RESTART" >> $LOG
+          sed -i '/^\[DMR Network\]$/,/^\[/ s/^Enable=0/Enable=1/' $MMDVMHOST
           systemctl restart mmdvmhost
         fi
         echo "NET" > $STATUS_FILE
   esac
 # Internet is down, go into standalone mode regardless
 else
-  mount -o remount,rw &> /dev/null
   echo $(date -u) "DMR Network $IPAddress is DOWN - STANDALONE MODE" >> $LOG
   sed -i '/^\[DMR Network\]$/,/^\[/ s/^Enable=1/Enable=0/' $MMDVMHOST
   systemctl restart mmdvmhost
