@@ -5,7 +5,7 @@ STATUS_FILE=/var/tmp/mmdvmstatus
 LOG=/var/log/mmdvmlog
 
 net_up () {
-    mount -o remount,rw &> /dev/null
+    mount -o remount,rw / &> /dev/null
     echo $(date) "DMR Network $IPAddress is UP - GOING NET MODE" >> $LOG
     sed -i '/^\[DMR Network\]$/,/^\[/ s/^Enable=0/Enable=1/' $MMDVMHOST
     systemctl restart mmdvmhost
@@ -14,7 +14,7 @@ net_up () {
 }
 
 net_down () {
-    mount -o remount,rw &> /dev/null
+    mount -o remount,rw / &> /dev/null
     echo $(date) "DMR Network $IPAddress is DOWN - GOING STANDALONE MODE" >> $LOG
     sed -i '/^\[DMR Network\]$/,/^\[/ s/^Enable=1/Enable=0/' $MMDVMHOST
     systemctl restart mmdvmhost
