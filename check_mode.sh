@@ -10,8 +10,6 @@ IPAddress=$(awk -v TARGET="DMR Network" -F ' *= *' '{ if ($0 ~ /^\[.*\]$/) { gsu
 # Get current status
 if [ -f "$STATUS_FILE" ]; then
   Status=$(head -1 $STATUS_FILE)
-else
-  Status="START"
 fi
 # Check network condition by pinging the DMR master server
 ping -c 1 $IPAddress &> /dev/null
