@@ -17,7 +17,7 @@ if [ "$?" = 0 ]; then
   if [ "$Status" == "NET" ]; then
     systemctl status mmdvmhost &> /dev/null
     if [ "$?" -ne 0 ]; then
-      mount -o remount,rw &> /dev/null
+      mount -o remount,rw / &> /dev/null
       echo $(date) "DMR Network $IPAddress is UP - NET RESTART" >> $LOG
       sed -i '/^\[DMR Network\]$/,/^\[/ s/^Enable=0/Enable=1/' $MMDVMHOST
       systemctl restart mmdvmhost
@@ -28,7 +28,7 @@ if [ "$?" = 0 ]; then
     fi
 # We're currently running standalone or startup, change DMR Network to enable
   else
-    mount -o remount,rw &> /dev/null
+    mount -o remount,rw / &> /dev/null
     echo $(date) "DMR Network $IPAddress is UP - GOING NET MODE" >> $LOG
     sed -i '/^\[DMR Network\]$/,/^\[/ s/^Enable=0/Enable=1/' $MMDVMHOST
     systemctl restart mmdvmhost
@@ -38,7 +38,7 @@ if [ "$?" = 0 ]; then
 # Network is down, go into standalone mode
 else
   if [ "$Status" != "STANDALONE" ]; then
-       mount -o remount,rw &> /dev/null
+       mount -o remount,rw / &> /dev/null
        echo $(date) "DMR Network $IPAddress is DOWN - GOING STANDALONE MODE" >> $LOG
        sed -i '/^\[DMR Network\]$/,/^\[/ s/^Enable=1/Enable=0/' $MMDVMHOST
        systemctl restart mmdvmhost
