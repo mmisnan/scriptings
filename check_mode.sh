@@ -15,18 +15,11 @@ else
 fi
 # Check network condition by pinging the DMR master server
 ping -c 1 $IPAddress &> /dev/null
+# Network is up, check if we're already connected
 if [ "$?" = 0 ]; then
-# Check for current status, if it is in standalone or empty
-# Bring it up, else do nothing
-  if [ "$Status" == "STANDALONE" ]; then
-# We're currently running standalone, change DMR Network to enable
-    echo $(date) "DMR Network $IPAddress is UP - GOING NET MODE" >> $LOG
-    sed -i '/^\[DMR Network\]$/,/^\[/ s/^Enable=0/Enable=1/' $MMDVMHOST
-    systemctl restart mmdvmhost
-    echo "NET" > $STATUS_FILE
 # Check if mmdvmhost is running, start if not
-  else
-    systemctl status mmdvmhost &> /dev/null
+  if [ "$Status" == "NET" ]; then
+  systemctl status mmdvmhost &> /dev/null
     if [ "$?" -ne 0 ]; then
       echo $(date) "DMR Network $IPAddress is UP - NET RESTART" >> $LOG
       sed -i '/^\[DMR Network\]$/,/^\[/ s/^Enable=0/Enable=1/' $MMDVMHOST
@@ -35,8 +28,14 @@ if [ "$?" = 0 ]; then
     else
       echo $(date) "DMR Network $IPAddress is UP - STILL IN NET MODE" >> $LOG
     fi
+# We're currently running standalone or startup, change DMR Network to enable
+  else
+    echo $(date) "DMR Network $IPAddress is UP - GOING NET MODE" >> $LOG
+    sed -i '/^\[DMR Network\]$/,/^\[/ s/^Enable=0/Enable=1/' $MMDVMHOST
+    systemctl restart mmdvmhost
+    echo "NET" > $STATUS_FILE
   fi
-# Internet is down, go into standalone mode regardless
+# Network is down, go into standalone mode
 else
   if [ "$Status" != "STANDALONE" ]; then
        echo $(date) "DMR Network $IPAddress is DOWN - GOING STANDALONE MODE" >> $LOG
