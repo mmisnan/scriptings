@@ -132,7 +132,7 @@ while ($line = <$fpi>) {
 
         $alt = $alt_s*3.28084; ## m -> feet
 
-        $callsign = $serialno;
+        $callsign = substr($serialno,-9);
         $temp = "";
         
 	if ( time() >= $actiontime ) {
