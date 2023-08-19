@@ -1,6 +1,12 @@
 #!/usr/bin/env perl
 ## aprs-output provided by daniestevez
 ## axudp extensions provided by dl9rdz
+## To run: rec -t wav -r 48000 - 2>/dev/null | \
+##  sox - -t wav - lowpass 2800 | \
+##  ./weathex -b | \
+##  ./pos2aprs.pl CALLSIGN passcode "Radiosonda AEMET LEMD" | \
+##  nc rotate.aprs2.net 14580 > /dev/null
+
 use strict;
 use warnings;
 use IO::Socket::INET;
