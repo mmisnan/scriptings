@@ -118,7 +118,6 @@ while ($line = <$fpi>) {
 	my ($lat_d, $lat_m) = $gpsdata =~ /lat:\ *(-?\d*)(\.\d*)/;
 	my ($lon_d, $lon_m) = $gpsdata =~ /lon:\ *(-?\d*)(\.\d*)/;
 	my ($hr, $min, $sec) = $gpsdata =~ /(\d{2}):(\d{2}):(\d{2})/;
- 	my ($hr, $min, $sec) = $gpsdata =~ /(\d{2}):(\d{2}):(\d{2})/;
 
         $hms = $hr*10000+$min*100+$sec;
 
@@ -144,7 +143,6 @@ while ($line = <$fpi>) {
 	  }
           $actiontime += 20; 
 	}
-
     }
 }
 
