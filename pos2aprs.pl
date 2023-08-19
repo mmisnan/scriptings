@@ -17,7 +17,7 @@ my $date = undef;
 
 my $mycallsign;
 my $passcode;
-my $comment";
+my $comment;
 
 my $udp;
 GetOptions("u=s" => \$udp) or die "Error in command line arguments\n";
