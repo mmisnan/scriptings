@@ -142,7 +142,7 @@ while ($line = <$fpi>) {
 	        $str = (split(":",$str))[1];
 		print $sock appendcrc($kissheader.chr(0x03).chr(0xf0).$str);
 	  }
-          $actiontime += 10; 
+          $actiontime += 20; 
 	}
 
     }
