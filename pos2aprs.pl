@@ -9,9 +9,9 @@ use Getopt::Long;
 my $filename = undef;
 my $date = undef;
 
-my $mycallsign = "9M2TPT";
-my $passcode = "10415";
-my $comment = "KLIA Tracking";
+my $mycallsign;
+my $passcode;
+my $comment";
 
 my $udp;
 GetOptions("u=s" => \$udp) or die "Error in command line arguments\n";
